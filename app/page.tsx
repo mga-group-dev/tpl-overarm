@@ -1,5 +1,6 @@
 
 import RegistrationForm from "@/app/components/RegistrationForm";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -10,13 +11,23 @@ export default function Home() {
         <div className="rounded-2xl overflow-hidden shadow border border-gray-100">
 
           {/* Hero Header */}
-          <div className="bg-linear-to-br from-green-700 to-emerald-500 px-8 py-8 text-white">
-            <p className="text-xs font-bold tracking-widest uppercase text-green-200 mb-2">
-              Tax Sahi Hai
-            </p>
-            <h1 className="text-4xl font-extrabold tracking-tight leading-none">TPL 3.0</h1>
-            <p className="text-green-100 text-sm mt-2">Game On: 2026 Edition</p>
+          <div className="bg-linear-to-br from-green-700 to-emerald-500 px-8 py-6 text-white flex flex-col md:flex-row items-center gap-4 justify-between">
+            <div>
+              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight leading-none text-center">TPL 3.0</h1>
+              <p className="text-green-100 text-sm mt-2">Game On: 2026 Edition</p>
+            </div>
+            <div className="bg-white rounded-lg p-2 w-max">
+              <Image
+                src="https://taxsahihai.com/main_logo.png"
+                alt="Tax Sahi Hai"
+                width={220}
+                height={60}
+                priority
+              />
+            </div>
           </div>
+
+
 
           {/* Key Dates */}
           <div className="bg-white grid grid-cols-2 divide-x divide-gray-100 border-b border-gray-100">
