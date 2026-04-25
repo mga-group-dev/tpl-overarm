@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tax Sahi Hai® TPL 3.0 — Player Registration",
+  title: "TPL 3.0 Player Registration | Tax Sahi Hai ",
   description:
-    "Register for Tax Sahi Hai® TPL 3.0 — Game On: 2026 Edition. Match on 27th June 2026. Registration closes 31st May 2026.",
+    "Register for Tax Sahi Hai® TPL 3.0 | Game On: 2026 Edition. Match on 27th June 2026. Registration closes 31st May 2026.",
 };
 
 export default function RootLayout({
