@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 export async function POST() {
   try {
     const order = await razorpay.orders.create({
-      amount: 100, // ₹1 in paise (test)
+      amount: 50000, // ₹500 in paise
       currency: "INR",
       receipt: `tpl_${randomUUID().replace(/-/g, "").slice(0, 16)}`,
     });
