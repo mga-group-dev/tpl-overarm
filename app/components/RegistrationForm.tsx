@@ -53,10 +53,15 @@ export default function RegistrationForm() {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema) as Resolver<RegistrationFormData>,
+    defaultValues: { registrationType: "Player" },
+    shouldUnregister: true,
   });
+
+  const registrationType = watch("registrationType");
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -207,6 +212,38 @@ export default function RegistrationForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
 
+      {/* Registration Type */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          I am registering as <span className="text-red-500">*</span>
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          {([
+            { value: "Player", desc: "I want to play in the tournament" },
+            { value: "Spectator", desc: "I want to watch the tournament" },
+          ] as const).map(({ value, desc }) => (
+            <label
+              key={value}
+              className="flex flex-col gap-1 cursor-pointer rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 hover:border-green-400 has-checked:border-green-500 has-checked:bg-green-50 has-checked:text-green-700 transition-all"
+            >
+              <div className="flex items-center gap-2.5">
+                <input
+                  {...register("registrationType")}
+                  type="radio"
+                  value={value}
+                  className="accent-green-600"
+                />
+                <span className="font-semibold">{value}</span>
+              </div>
+              <span className="text-xs text-gray-400 pl-5">{desc}</span>
+            </label>
+          ))}
+        </div>
+        {errors.registrationType && (
+          <p className="mt-1 text-xs text-red-500">{errors.registrationType.message}</p>
+        )}
+      </div>
+
       <SectionLabel label="Personal Information" />
 
       {/* Full Name */}
@@ -296,72 +333,6 @@ export default function RegistrationForm() {
         )}
       </div>
 
-      <SectionLabel label="Cricket Profile" />
-
-      {/* Playing Expertise */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Playing Expertise <span className="text-red-500">*</span>
-        </label>
-        <div className="grid grid-cols-2 gap-2.5">
-          {(["Batting", "Bowling", "Fielding", "All Rounder"] as const).map((exp) => (
-            <label
-              key={exp}
-              className="flex items-center gap-2.5 cursor-pointer rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 hover:border-green-400 has-checked:border-green-500 has-checked:bg-green-50 has-checked:text-green-700 transition-all"
-            >
-              <input
-                {...register("playingExpertise")}
-                type="radio"
-                value={exp}
-                className="accent-green-600"
-              />
-              {exp}
-            </label>
-          ))}
-        </div>
-        {errors.playingExpertise && (
-          <p className="mt-1 text-xs text-red-500">{errors.playingExpertise.message}</p>
-        )}
-      </div>
-
-      {/* Skill Ratings */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 space-y-5">
-        <p className="text-sm font-semibold text-gray-700">Skill Ratings (1 to 10)</p>
-
-        {(
-          [
-            { name: "battingSkills", label: "Batting Skills" },
-            { name: "bowlingSkills", label: "Bowling Skills" },
-            { name: "fieldingSkills", label: "Fielding Skills" },
-          ] as const
-        ).map(({ name, label }) => (
-          <div key={name}>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              {label} <span className="text-red-500">*</span>
-            </label>
-            <div className="flex gap-1.5 flex-wrap">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                <label
-                  key={n}
-                  className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 bg-white text-sm cursor-pointer hover:border-green-400 hover:text-green-600 has-checked:bg-green-600 has-checked:border-green-600 has-checked:text-white font-semibold transition-all text-gray-400"
-                >
-                  <input
-                    {...register(name, { setValueAs: (v) => parseInt(v, 10) })}
-                    type="radio"
-                    value={n}
-                    className="sr-only"
-                  />
-                  {n}
-                </label>
-              ))}
-            </div>
-            {errors[name] && (
-              <p className="mt-1 text-xs text-red-500">{errors[name]?.message}</p>
-            )}
-          </div>
-        ))}
-      </div>
-
       <SectionLabel label="Jersey Details" />
 
       {/* Jersey Size */}
@@ -424,7 +395,7 @@ export default function RegistrationForm() {
         )}
       </div>
 
-      <SectionLabel label="Player Photo" />
+      <SectionLabel label="Profile Photo" />
 
       {/* Photo Upload */}
       <div>
@@ -580,7 +551,75 @@ export default function RegistrationForm() {
         )}
       </div>
 
-      <SectionLabel label="Profile and Payment" />
+      {registrationType === "Player" && (
+        <>
+      <SectionLabel label="Cricket Profile" />
+
+      {/* Playing Expertise */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Playing Expertise <span className="text-red-500">*</span>
+        </label>
+        <div className="grid grid-cols-2 gap-2.5">
+          {(["Batting", "Bowling", "Fielding", "All Rounder"] as const).map((exp) => (
+            <label
+              key={exp}
+              className="flex items-center gap-2.5 cursor-pointer rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 hover:border-green-400 has-checked:border-green-500 has-checked:bg-green-50 has-checked:text-green-700 transition-all"
+            >
+              <input
+                {...register("playingExpertise")}
+                type="radio"
+                value={exp}
+                className="accent-green-600"
+              />
+              {exp}
+            </label>
+          ))}
+        </div>
+        {errors.playingExpertise && (
+          <p className="mt-1 text-xs text-red-500">{errors.playingExpertise.message}</p>
+        )}
+      </div>
+
+      {/* Skill Ratings */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 space-y-5">
+        <p className="text-sm font-semibold text-gray-700">Skill Ratings (1 to 10)</p>
+
+        {(
+          [
+            { name: "battingSkills", label: "Batting Skills" },
+            { name: "bowlingSkills", label: "Bowling Skills" },
+            { name: "fieldingSkills", label: "Fielding Skills" },
+          ] as const
+        ).map(({ name, label }) => (
+          <div key={name}>
+            <label className="block text-sm font-medium text-gray-600 mb-2">
+              {label} <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-1.5 flex-wrap">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                <label
+                  key={n}
+                  className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 bg-white text-sm cursor-pointer hover:border-green-400 hover:text-green-600 has-checked:bg-green-600 has-checked:border-green-600 has-checked:text-white font-semibold transition-all text-gray-400"
+                >
+                  <input
+                    {...register(name)}
+                    type="radio"
+                    value={n}
+                    className="sr-only"
+                  />
+                  {n}
+                </label>
+              ))}
+            </div>
+            {errors[name] && (
+              <p className="mt-1 text-xs text-red-500">{errors[name]?.message}</p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <SectionLabel label="Cricheros Profile" />
 
       {/* Cricheros Profile */}
       <div>
@@ -597,7 +636,8 @@ export default function RegistrationForm() {
           <p className="mt-1 text-xs text-red-500">{errors.cricheroProfile.message}</p>
         )}
       </div>
-
+        </>
+      )}
 
       {/* Submit Error */}
       {submitError && (

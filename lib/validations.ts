@@ -1,68 +1,81 @@
 import { z } from "zod";
 
-export const registrationSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, "Full name must be at least 2 characters")
-    .max(100, "Full name must be at most 100 characters"),
+export const registrationSchema = z
+  .object({
+    registrationType: z.enum(["Player", "Spectator"], { error: "Please select a registration type" }),
 
-  age: z
-    .coerce.number()
-    .int("Age must be a whole number")
-    .positive("Age must be a positive number")
-    .max(100, "Age must be 100 or less"),
+    fullName: z
+      .string()
+      .min(2, "Full name must be at least 2 characters")
+      .max(100, "Full name must be at most 100 characters"),
 
-  gender: z.enum(["Male", "Female"], { error: "Please select a gender" }),
+    age: z.preprocess(
+      (value) => {
+        if (value === "" || value === null || value === undefined) return undefined;
+        const num = Number(value);
+        return isNaN(num) ? undefined : num;
+      },
+      z.number({ error: "Age is required" })
+        .int("Age must be a whole number")
+        .positive("Age must be a positive number")
+        .max(100, "Age must be 100 or less")
+    ),
 
-  contactNumber: z
-    .string()
-    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+    gender: z.enum(["Male", "Female"], { error: "Please select a gender" }),
 
-  companyName: z
-    .string()
-    .min(2, "Company name must be at least 2 characters")
-    .max(100, "Company name must be at most 100 characters"),
+    contactNumber: z
+      .string()
+      .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
 
-  playingExpertise: z.enum(["Batting", "Bowling", "Fielding", "All Rounder"], { error: "Please select a playing expertise" }),
+    companyName: z
+      .string()
+      .min(2, "Company name must be at least 2 characters")
+      .max(100, "Company name must be at most 100 characters"),
 
-  battingSkills: z
-    .coerce.number()
-    .int("Rating must be a whole number")
-    .min(1, "Rating must be between 1 and 10")
-    .max(10, "Rating must be between 1 and 10"),
+    jerseySize: z.enum(["S", "M", "L", "XL", "XXL", "XXXL"], { error: "Please select a jersey size" }),
 
-  bowlingSkills: z
-    .coerce.number()
-    .int("Rating must be a whole number")
-    .min(1, "Rating must be between 1 and 10")
-    .max(10, "Rating must be between 1 and 10"),
+    jerseyNumber: z
+      .string()
+      .regex(/^(0[1-9]|[1-9][0-9])$/, "Jersey number must be between 01 and 99"),
 
-  fieldingSkills: z
-    .coerce.number()
-    .int("Rating must be a whole number")
-    .min(1, "Rating must be between 1 and 10")
-    .max(10, "Rating must be between 1 and 10"),
+    jerseyName: z
+      .string()
+      .min(1, "Name on jersey is required")
+      .max(15, "Name on jersey must be at most 15 characters"),
 
-  jerseySize: z.enum(["S", "M", "L", "XL", "XXL", "XXXL"], { error: "Please select a jersey size" }),
+    photoUrl: z
+      .string()
+      .min(1, "Please upload your photo"),
 
-  jerseyNumber: z
-    .string()
-    .regex(/^(0[1-9]|[1-9][0-9])$/, "Jersey number must be between 01 and 99"),
+    // Player-only fields
+    playingExpertise: z.enum(["Batting", "Bowling", "Fielding", "All Rounder"]).optional(),
 
-  jerseyName: z
-    .string()
-    .min(1, "Name on jersey is required")
-    .max(15, "Name on jersey must be at most 15 characters"),
+    battingSkills: z.coerce.number().int().min(1).max(10).optional(),
+    bowlingSkills: z.coerce.number().int().min(1).max(10).optional(),
+    fieldingSkills: z.coerce.number().int().min(1).max(10).optional(),
 
-  photoUrl: z
-    .string()
-    .url("Please upload a valid photo")
-    .min(1, "Please upload your photo"),
+    cricheroProfile: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.registrationType !== "Player") return;
 
-  cricheroProfile: z
-    .string()
-    .min(1, "Cricheros profile is required")
-    .max(200, "Cricheros profile must be at most 200 characters"),
-});
+    if (!data.playingExpertise) {
+      ctx.addIssue({ code: "custom", message: "Please select a playing expertise", path: ["playingExpertise"] });
+    }
+    if (data.battingSkills === undefined) {
+      ctx.addIssue({ code: "custom", message: "Please rate your batting skills", path: ["battingSkills"] });
+    }
+    if (data.bowlingSkills === undefined) {
+      ctx.addIssue({ code: "custom", message: "Please rate your bowling skills", path: ["bowlingSkills"] });
+    }
+    if (data.fieldingSkills === undefined) {
+      ctx.addIssue({ code: "custom", message: "Please rate your fielding skills", path: ["fieldingSkills"] });
+    }
+    if (!data.cricheroProfile || data.cricheroProfile.trim().length < 1) {
+      ctx.addIssue({ code: "custom", message: "Cricheros profile is required", path: ["cricheroProfile"] });
+    } else if (data.cricheroProfile.length > 200) {
+      ctx.addIssue({ code: "custom", message: "Cricheros profile must be at most 200 characters", path: ["cricheroProfile"] });
+    }
+  });
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>;

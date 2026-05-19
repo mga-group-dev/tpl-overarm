@@ -53,9 +53,9 @@ export async function POST(request: NextRequest) {
     const parsed = registrationSchema.safeParse({
       ...formData,
       age: Number(formData.age),
-      battingSkills: Number(formData.battingSkills),
-      bowlingSkills: Number(formData.bowlingSkills),
-      fieldingSkills: Number(formData.fieldingSkills),
+      battingSkills: formData.battingSkills != null ? Number(formData.battingSkills) : undefined,
+      bowlingSkills: formData.bowlingSkills != null ? Number(formData.bowlingSkills) : undefined,
+      fieldingSkills: formData.fieldingSkills != null ? Number(formData.fieldingSkills) : undefined,
     });
 
     if (!parsed.success) {
@@ -66,31 +66,34 @@ export async function POST(request: NextRequest) {
     }
 
     const data = parsed.data;
+    const isPlayer = data.registrationType === "Player";
     const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
     // Append to Google Sheets via Apps Script Web App
     await appendRegistration([
       timestamp,
+      data.registrationType,
       data.fullName,
       String(data.age),
       data.gender,
       data.contactNumber,
       data.companyName,
-      data.playingExpertise,
-      String(data.battingSkills),
-      String(data.bowlingSkills),
-      String(data.fieldingSkills),
+      isPlayer ? (data.playingExpertise ?? "") : "",
+      isPlayer ? (data.battingSkills?.toString() ?? "") : "",
+      isPlayer ? (data.bowlingSkills?.toString() ?? "") : "",
+      isPlayer ? (data.fieldingSkills?.toString() ?? "") : "",
       data.jerseySize,
       data.jerseyNumber,
       data.jerseyName,
       data.photoUrl,
-      data.cricheroProfile,
+      isPlayer ? (data.cricheroProfile ?? "") : "",
       razorpay_payment_id,
       razorpay_order_id,
     ]);
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Registration error:", error);
     return NextResponse.json(
       { error: "Registration failed. Please contact support." },
       { status: 500 }
