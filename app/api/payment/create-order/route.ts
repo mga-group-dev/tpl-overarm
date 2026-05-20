@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     };
 
     const order = await razorpay.orders.create({
-      amount: 100, // ₹1 in paise (testing)
+      amount: 50000, // ₹500 in paise
       currency: "INR",
       receipt: `tpl_${randomUUID().replace(/-/g, "").slice(0, 16)}`,
       notes,
