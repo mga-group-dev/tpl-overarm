@@ -119,8 +119,13 @@ export default function RegistrationForm() {
     setSubmitError(null);
 
     try {
-      // 1. Create Razorpay order
-      const orderRes = await fetch("/api/payment/create-order", { method: "POST" });
+      // 1. Create Razorpay order (form data is stored in order notes so the
+      //    webhook can record the registration even if the user leaves the page)
+      const orderRes = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formData: data }),
+      });
       const orderData = await orderRes.json();
       if (!orderRes.ok) throw new Error(orderData.error ?? "Failed to create order");
 
