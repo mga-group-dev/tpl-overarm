@@ -173,10 +173,15 @@ isFreeRegistration ? "" : razorpay_order_id,
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Registration error:", error);
-    return NextResponse.json(
-      { error: "Registration failed. Please contact support." },
-      { status: 500 }
-    );
-  }
+  console.error("========== VERIFY ROUTE ERROR ==========");
+
+ 
+
+  console.error(error);
+
+  return NextResponse.json(
+    { error: "Unknown server error" },
+    { status: 500 }
+  );
+}
 }

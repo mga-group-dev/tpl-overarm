@@ -150,7 +150,10 @@ const registrationAmount =
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      formData: data,
+      isFreeRegistration: true,
+    }),
   });
 
   const result = await res.json();
@@ -253,9 +256,11 @@ const registrationAmount =
             <strong className="text-gray-700">27th June 2026</strong>.
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 text-xs font-semibold text-green-700">
-          Payment received
-        </div>
+       {registrationAmount > 0 && (
+  <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 text-xs font-semibold text-green-700">
+    Payment received
+  </div>
+)}
       </div>
     );
   }
