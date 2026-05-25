@@ -132,13 +132,7 @@ await appendRegistration([
   data.contactNumber,
   data.companyName ?? "",
 
-  // Eligibility
-  data.eligibilityCategory ?? "",
-  data.gstNumber ?? "",
-  data.salaryCompanyName ?? "",
-  data.designation ?? "",
-  data.dpiitCertificate ?? "",
-  data.trademarkCertificate ?? "",
+
 
   // Cricket Details
   isPlayer ? (data.playingExpertise ?? "") : "",
@@ -161,21 +155,40 @@ await appendRegistration([
   data.photoUrl,
   isPlayer ? (data.cricheroProfile ?? "") : "",
 
-  // Team Owner
-  data.teamName ?? "",
+ 
 
   // Payment
  paymentStatus,
 registrationAmount.toString(),
 isFreeRegistration ? "" : razorpay_payment_id,
 isFreeRegistration ? "" : razorpay_order_id,
+  // Eligibility
+  isFreeRegistration
+    ? "Yes"
+    : "No",
+  data.eligibilityCategory ?? "",
+  data.gstNumber ?? "",
+  data.salaryCompanyName ?? "",
+  data.designation ?? "",
+  data.dpiitCertificate ?? "",
+  data.trademarkCertificate ?? "",
+    // Team Owner
+  data.teamName ?? "",
 ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
   console.error("========== VERIFY ROUTE ERROR ==========");
 
- 
+  if (error instanceof Error) {
+    console.error("MESSAGE:", error.message);
+    console.error("STACK:", error.stack);
+
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    );
+  }
 
   console.error(error);
 

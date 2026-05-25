@@ -273,7 +273,7 @@ const registrationAmount =
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           I am registering as <span className="text-red-500">*</span>
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {([
             { value: "Player", desc: "I want to play in the tournament" },
             { value: "Spectator", desc: "I want to watch the tournament" },
