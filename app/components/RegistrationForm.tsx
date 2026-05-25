@@ -47,6 +47,7 @@ export default function RegistrationForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [registrationAmt, setRegistrationAmt] = useState(0);
 
   const {
     register,
@@ -62,6 +63,19 @@ export default function RegistrationForm() {
   });
 
   const registrationType = watch("registrationType");
+  const eligibilityCategory = watch("eligibilityCategory");
+  const isPlayerWithNoEligibility =
+  registrationType === "Player" &&
+  eligibilityCategory === "None";
+
+const registrationAmount =
+  registrationType === "Team Owner"
+    ? 15000
+    : registrationType === "Spectator"
+    ? 500
+    : isPlayerWithNoEligibility
+    ? 500
+    : 0;
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -117,10 +131,37 @@ export default function RegistrationForm() {
   async function onSubmit(data: RegistrationFormData) {
     setIsSubmitting(true);
     setSubmitError(null);
+    const amount =
+  data.registrationType === "Team Owner"
+    ? 15000
+    : data.registrationType === "Spectator"
+    ? 500
+    : data.eligibilityCategory === "None"
+    ? 500
+    : 0;
+    setRegistrationAmt(amount);
 
     try {
       // 1. Create Razorpay order (form data is stored in order notes so the
       //    webhook can record the registration even if the user leaves the page)
+      if (amount === 0) {
+  const res = await fetch("/api/register-free", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Registration failed");
+  }
+
+  setIsSuccess(true);
+  return;
+}
       const orderRes = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -202,8 +243,12 @@ export default function RegistrationForm() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Confirmed</h2>
           <p className="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto">
-            Welcome to <strong className="text-gray-700">Tax Sahi Hai TPL 3.0</strong>. Your payment
-            was successful and your registration is confirmed. See you on the pitch on{" "}
+            Welcome to <strong className="text-gray-700">Tax Sahi Hai TPL 3.0</strong>.   {registrationAmount > 0
+    ? "Your payment was successful and your registration is confirmed."
+    : "Your registration was successful and confirmed."}
+
+  {" "}See you on the pitch on{" "}
+
             <strong className="text-gray-700">27th June 2026</strong>.
           </p>
         </div>
@@ -249,8 +294,176 @@ export default function RegistrationForm() {
           <p className="mt-1 text-xs text-red-500">{errors.registrationType.message}</p>
         )}
       </div>
+      {registrationType === "Player" && (
+        <> 
+        
+        
+        <SectionLabel label="Eligibility Verification" />
 
+    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-5">
+
+      {/* GST */}
+      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
+        <input
+          {...register("eligibilityCategory")}
+          type="radio"
+          value="GST Registered Business Owner"
+          className="mt-1 accent-green-600"
+        />
+
+        <div>
+          <p className="font-semibold text-sm text-gray-800">
+            GST Registered Business Owner
+          </p>
+        </div>
+      </label>
+
+      {eligibilityCategory === "GST Registered Business Owner" && (
+        <div>
+          <input
+            {...register("gstNumber")}
+            type="text"
+            placeholder="Enter GST Number"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
+          />
+
+          {errors.gstNumber && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.gstNumber.message}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Salaried */}
+      <label className="flex items-start gap-3 rounded-xl border text-black border-gray-200 bg-white p-4 cursor-pointer">
+        <input
+          {...register("eligibilityCategory")}
+          type="radio"
+          value="Salaried Professional"
+          className="mt-1 accent-green-600"
+        />
+
+        <div>
+          <p className="font-semibold text-sm text-gray-800">
+            Salaried Professional
+          </p>
+        </div>
+      </label>
+
+      {eligibilityCategory === "Salaried Professional" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+          <input
+            {...register("salaryCompanyName")}
+            type="text"
+            placeholder="Company Name"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
+          />
+
+          <input
+            {...register("designation")}
+            type="text"
+            placeholder="Designation"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
+          />
+
+        </div>
+      )}
+
+      {/* DPIIT */}
+      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
+        <input
+          {...register("eligibilityCategory")}
+          type="radio"
+          value="DPIIT Startup Founder"
+          className="mt-1 accent-green-600"
+        />
+
+        <div>
+          <p className="font-semibold text-sm text-gray-800">
+            DPIIT Startup Founder
+          </p>
+        </div>
+      </label>
+
+      {eligibilityCategory === "DPIIT Startup Founder" && (
+        <div>
+          <input
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+
+              if (!file) return;
+
+              setValue("dpiitCertificate", file.name);
+            }}
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
+          />
+        </div>
+      )}
+
+      {/* Trademark */}
+      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
+        <input
+          {...register("eligibilityCategory")}
+          type="radio"
+          value="Trademark Holder"
+          className="mt-1 accent-green-600"
+        />
+
+        <div>
+          <p className="font-semibold text-sm text-gray-800">
+            Trademark Holder
+          </p>
+        </div>
+      </label>
+
+      {eligibilityCategory === "Trademark Holder" && (
+        <div>
+          <input
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+
+              if (!file) return;
+
+              setValue("trademarkCertificate", file.name);
+            }}
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
+          />
+        </div>
+      )}
+
+      {/* None */}
+      <label className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 cursor-pointer">
+        <input
+          {...register("eligibilityCategory")}
+          type="radio"
+          value="None"
+          className="mt-1 accent-red-500"
+        />
+
+        <div>
+          <p className="font-semibold text-sm text-gray-800">
+            None of the Above
+          </p>
+        </div>
+      </label>
+
+      {errors.eligibilityCategory && (
+        <p className="text-xs text-red-500">
+          {errors.eligibilityCategory.message}
+        </p>
+      )}
+    </div>
       <SectionLabel label="Personal Information" />
+        
+        
+         </>)}
+
 
       {/* Full Name */}
       <div>
@@ -559,6 +772,7 @@ export default function RegistrationForm() {
 
       {registrationType === "Player" && (
         <>
+        
       <SectionLabel label="Cricket Profile" />
 
       {/* Playing Expertise */}
@@ -857,9 +1071,7 @@ export default function RegistrationForm() {
         />
       </svg>
 
-      {registrationType === "Team Owner"
-        ? "Processing Team Registration..."
-        : "Processing"}
+      Processing...
     </span>
   ) : registrationType === "Team Owner" ? (
     <div className="flex flex-col items-center justify-center leading-tight">
@@ -871,8 +1083,10 @@ export default function RegistrationForm() {
         Includes 5 Crore Auction Credits
       </span>
     </div>
+  ) : registrationAmount === 0 ? (
+    "Register for Free"
   ) : (
-    "Pay Rs 500 and Register"
+    `Pay ₹${registrationAmount} and Register`
   )}
 </button>
     </form>
