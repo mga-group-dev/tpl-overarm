@@ -47,7 +47,7 @@ export default function RegistrationForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [registrationAmt, setRegistrationAmt] = useState(0);
+  const [registrationAmt, setRegistrationAmt] = useState<number>(0);
 
   const {
     register,
@@ -145,7 +145,7 @@ const registrationAmount =
       // 1. Create Razorpay order (form data is stored in order notes so the
       //    webhook can record the registration even if the user leaves the page)
       if (amount === 0) {
-  const res = await fetch("/api/register-free", {
+  const res = await fetch("/api/payment/verify", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -203,6 +203,7 @@ const registrationAmount =
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   formData: getValues(),
+                   isFreeRegistration: registrationAmt === 0,
                 }),
               });
               const verifyData = await verifyRes.json();
@@ -260,7 +261,7 @@ const registrationAmount =
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
       {/* Registration Type */}
       <div>
@@ -297,8 +298,16 @@ const registrationAmount =
       {registrationType === "Player" && (
         <> 
         
+
         
-        <SectionLabel label="Eligibility Verification" />
+        
+        {/* <SectionLabel label="Eligibility Verification"  /> */}
+        <div className="rounded-2xl bg-white shadow border border-gray-100 overflow-hidden">
+          <div className="bg-linear-to-r from-green-600 to-emerald-500 px-8 py-5">
+            <h2 className="text-lg font-bold text-white">Eligiblity Category</h2>
+           
+          </div>
+          </div>
 
     <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-5">
 
@@ -309,6 +318,7 @@ const registrationAmount =
           type="radio"
           value="GST Registered Business Owner"
           className="mt-1 accent-green-600"
+           
         />
 
         <div>
@@ -322,8 +332,10 @@ const registrationAmount =
         <div>
           <input
             {...register("gstNumber")}
+            required={eligibilityCategory === "GST Registered Business Owner"}
             type="text"
             placeholder="Enter GST Number"
+            
             className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
           />
 
@@ -341,12 +353,13 @@ const registrationAmount =
           {...register("eligibilityCategory")}
           type="radio"
           value="Salaried Professional"
+          
           className="mt-1 accent-green-600"
         />
 
         <div>
           <p className="font-semibold text-sm text-gray-800">
-            Salaried Professional
+            Salaried Professional (₹30L + Annual CTC)
           </p>
         </div>
       </label>
@@ -358,6 +371,7 @@ const registrationAmount =
             {...register("salaryCompanyName")}
             type="text"
             placeholder="Company Name"
+             required={eligibilityCategory === "Salaried Professional"}
             className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
           />
 
@@ -365,6 +379,7 @@ const registrationAmount =
             {...register("designation")}
             type="text"
             placeholder="Designation"
+              required={eligibilityCategory === "Salaried Professional"}
             className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
           />
 
@@ -382,7 +397,7 @@ const registrationAmount =
 
         <div>
           <p className="font-semibold text-sm text-gray-800">
-            DPIIT Startup Founder
+            DPIIT Recognized Startup Founder
           </p>
         </div>
       </label>
@@ -392,6 +407,7 @@ const registrationAmount =
           <input
             type="file"
             accept=".pdf,.jpg,.jpeg,.png"
+             required={eligibilityCategory === "DPIIT Startup Founder"}
             onChange={(e) => {
               const file = e.target.files?.[0];
 
@@ -411,11 +427,12 @@ const registrationAmount =
           type="radio"
           value="Trademark Holder"
           className="mt-1 accent-green-600"
+            required={eligibilityCategory === "Trademark Holder"}
         />
 
         <div>
           <p className="font-semibold text-sm text-gray-800">
-            Trademark Holder
+             Registered Trademark Holder
           </p>
         </div>
       </label>
@@ -425,6 +442,7 @@ const registrationAmount =
           <input
             type="file"
             accept=".pdf,.jpg,.jpeg,.png"
+             required={eligibilityCategory === "Trademark Holder"}
             onChange={(e) => {
               const file = e.target.files?.[0];
 
@@ -438,20 +456,28 @@ const registrationAmount =
       )}
 
       {/* None */}
-      <label className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 cursor-pointer">
+      <label className="flex items-start gap-3 rounded-xl border  p-4 cursor-pointer bg-white">
         <input
           {...register("eligibilityCategory")}
           type="radio"
           value="None"
-          className="mt-1 accent-red-500"
+          className="mt-1 accent-green-600"
         />
 
         <div>
-          <p className="font-semibold text-sm text-gray-800">
+          <p className="font-semibold text-sm text-gray-800 ">
             None of the Above
           </p>
         </div>
       </label>
+
+
+    <span className="text-black font-bold">
+Verification Note :</span>
+
+<span className="text-black">The TPL organizing committee reserves the right to verify submitted information and approve registrations accordingly.</span>
+
+
 
       {errors.eligibilityCategory && (
         <p className="text-xs text-red-500">

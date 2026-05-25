@@ -12,15 +12,28 @@ export async function POST(request: NextRequest) {
       razorpay_payment_id,
       razorpay_signature,
       formData,
+        isFreeRegistration,
     } = body;
 
     // Validate presence of required fields
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !formData) {
-      return NextResponse.json(
-        { error: "Missing required payment fields" },
-        { status: 400 }
-      );
-    }
+  if (!formData) {
+  return NextResponse.json(
+    { error: "Missing registration data" },
+    { status: 400 }
+  );
+}
+
+if (
+  !isFreeRegistration &&
+  (!razorpay_order_id ||
+    !razorpay_payment_id ||
+    !razorpay_signature)
+) {
+  return NextResponse.json(
+    { error: "Missing payment fields" },
+    { status: 400 }
+  );
+}
 
     // Verify HMAC-SHA256 signature
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -31,23 +44,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const generatedSignature = crypto
-      .createHmac("sha256", keySecret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
+    if (!isFreeRegistration) {
+  const generatedSignature = crypto
+    .createHmac("sha256", keySecret)
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+    .digest("hex");
 
-    const signatureBuffer = Buffer.from(generatedSignature, "utf-8");
-    const receivedBuffer = Buffer.from(razorpay_signature, "utf-8");
+  const signatureBuffer = Buffer.from(
+    generatedSignature,
+    "utf-8"
+  );
 
-    if (
-      signatureBuffer.length !== receivedBuffer.length ||
-      !crypto.timingSafeEqual(signatureBuffer, receivedBuffer)
-    ) {
-      return NextResponse.json(
-        { error: "Payment verification failed" },
-        { status: 400 }
-      );
-    }
+  const receivedBuffer = Buffer.from(
+    razorpay_signature,
+    "utf-8"
+  );
+
+  if (
+    signatureBuffer.length !== receivedBuffer.length ||
+    !crypto.timingSafeEqual(
+      signatureBuffer,
+      receivedBuffer
+    )
+  ) {
+    return NextResponse.json(
+      { error: "Payment verification failed" },
+      { status: 400 }
+    );
+  }
+}
 
     // Validate form data against schema
     const parsed = registrationSchema.safeParse({
@@ -65,31 +90,86 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = parsed.data;
-    const isPlayer = data.registrationType === "Player";
-    const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  const data = parsed.data;
 
-    // Append to Google Sheets via Apps Script Web App
-    await appendRegistration([
-      timestamp,
-      data.registrationType,
-      data.fullName,
-      String(data.age),
-      data.gender,
-      data.contactNumber,
-      data.companyName,
-      isPlayer ? (data.playingExpertise ?? "") : "",
-      isPlayer ? (data.battingSkills?.toString() ?? "") : "",
-      isPlayer ? (data.bowlingSkills?.toString() ?? "") : "",
-      isPlayer ? (data.fieldingSkills?.toString() ?? "") : "",
-      data.jerseySize,
-      data.jerseyNumber,
-      data.jerseyName,
-      data.photoUrl,
-      isPlayer ? (data.cricheroProfile ?? "") : "",
-      razorpay_payment_id,
-      razorpay_order_id,
-    ]);
+const isPlayer = data.registrationType === "Player";
+
+const timestamp = new Date().toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata",
+});
+
+// =================================
+// REGISTRATION AMOUNT
+// =================================
+
+const registrationAmount =
+  data.registrationType === "Team Owner"
+    ? 15000
+    : data.registrationType === "Spectator"
+    ? 500
+    : data.eligibilityCategory === "None"
+    ? 500
+    : 0;
+
+// =================================
+// PAYMENT STATUS
+// =================================
+
+const paymentStatus =
+  registrationAmount > 0 ? "Paid" : "Free";
+
+// =================================
+// APPEND TO SHEETS
+// =================================
+
+await appendRegistration([
+  // Basic Details
+  timestamp,
+  data.registrationType,
+  data.fullName,
+  String(data.age),
+  data.gender,
+  data.contactNumber,
+  data.companyName ?? "",
+
+  // Eligibility
+  data.eligibilityCategory ?? "",
+  data.gstNumber ?? "",
+  data.salaryCompanyName ?? "",
+  data.designation ?? "",
+  data.dpiitCertificate ?? "",
+  data.trademarkCertificate ?? "",
+
+  // Cricket Details
+  isPlayer ? (data.playingExpertise ?? "") : "",
+  isPlayer
+    ? (data.battingSkills?.toString() ?? "")
+    : "",
+  isPlayer
+    ? (data.bowlingSkills?.toString() ?? "")
+    : "",
+  isPlayer
+    ? (data.fieldingSkills?.toString() ?? "")
+    : "",
+
+  // Jersey
+  data.jerseySize,
+  data.jerseyNumber,
+  data.jerseyName,
+
+  // Profile
+  data.photoUrl,
+  isPlayer ? (data.cricheroProfile ?? "") : "",
+
+  // Team Owner
+  data.teamName ?? "",
+
+  // Payment
+ paymentStatus,
+registrationAmount.toString(),
+isFreeRegistration ? "" : razorpay_payment_id,
+isFreeRegistration ? "" : razorpay_order_id,
+]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
