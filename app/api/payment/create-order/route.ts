@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       ag:  String(d.age),
       gn:  d.gender,
       cn:  d.contactNumber,
-      co:  d.companyName,
+      co:  d.companyName ?? "",
       pe:  d.playingExpertise ?? "",
       bs:  d.battingSkills?.toString() ?? "",
       bw:  d.bowlingSkills?.toString() ?? "",
