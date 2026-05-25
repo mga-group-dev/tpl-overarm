@@ -48,59 +48,16 @@ export default function Home() {
           {/* Body */}
           <div className="bg-white px-8 py-6 space-y-5 text-sm text-gray-600">
             <p>
-              Bring your best game. The pitch is set and the spotlight is yours. Build your
-              squad and get ready for an action-packed showdown.
+       Curated participation from Founders, Professionals, Business owners & Corporate leaders.
             </p>
 
             <div className="h-px bg-gray-100" />
 
-            <div>
-              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gray-800 mb-3">
-                For All Participants
-                <span className="text-green-600 bg-green-50 border border-green-100 rounded-full px-2.5 py-0.5 normal-case text-xs tracking-normal font-semibold">
-                  Rs 500 per person
-                </span>
-              </h2>
-              <ul className="space-y-2.5">
-                {[
-                  "Official Tournament T-Shirt",
-                  "Food and Snacks during matches",
-                  "Evening refreshments (Tea or Coffee)",
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-gray-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                Registration is confirmed only after successful payment.
-              </p>
-            </div>
+        
 
-            <div className="h-px bg-gray-100" />
+          
 
-            <div>
-              <h2 className="text-xs font-bold uppercase tracking-wide text-gray-800 mb-1">
-                Individual Player Rewards
-              </h2>
-              <p className="text-gray-500 mb-3 text-xs">Exclusive awards for outstanding performers:</p>
-              <ul className="grid grid-cols-2 gap-y-2.5 gap-x-4">
-                {[
-                  "Most Sixes",
-                  "Most Fours",
-                  "Man of the Match",
-                  "Player of the Tournament",
-                  "Best Fielder",
-                  "Most Wickets",
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-2.5 text-gray-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            
           </div>
         </div>
 
