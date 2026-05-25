@@ -158,8 +158,7 @@ await appendRegistration([
  
 
   // Payment
- paymentStatus,
-registrationAmount.toString(),
+
 isFreeRegistration ? "" : razorpay_payment_id,
 isFreeRegistration ? "" : razorpay_order_id,
   // Eligibility
