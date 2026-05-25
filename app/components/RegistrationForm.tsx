@@ -226,6 +226,7 @@ export default function RegistrationForm() {
           {([
             { value: "Player", desc: "I want to play in the tournament" },
             { value: "Spectator", desc: "I want to watch the tournament" },
+              { value: "Team Owner", desc: "I want to own/manage a team" },
           ] as const).map(({ value, desc }) => (
             <label
               key={value}
