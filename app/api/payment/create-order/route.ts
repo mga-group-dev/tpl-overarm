@@ -33,6 +33,13 @@ export async function POST(request: NextRequest) {
 
     const d = parsed.data;
 
+    if (!["Player", "Spectator", "Team Owner"].includes(d.registrationType)) {
+  return NextResponse.json(
+    { error: "Invalid registration type" },
+    { status: 400 }
+  );
+}
+
     // Store all registration fields in Razorpay order notes (max 15 key-value pairs,
     // 256 chars per value). The webhook endpoint reads these notes to record the
     // registration even when the user does not return to the page after payment.
@@ -52,10 +59,17 @@ export async function POST(request: NextRequest) {
       jnm: d.jerseyName,
       pu:  d.photoUrl.slice(0, 256),
       cp:  d.cricheroProfile ?? "",
+        tn: d.teamName ?? "",
     };
 
+    const amount =
+  d.registrationType === "Team Owner"
+    ? 1500000 // ₹15,000 in paise
+    : 50000; // ₹500 in paise
+
+
     const order = await razorpay.orders.create({
-      amount: 50000, // ₹500 in paise
+      amount,
       currency: "INR",
       receipt: `tpl_${randomUUID().replace(/-/g, "").slice(0, 16)}`,
       notes,

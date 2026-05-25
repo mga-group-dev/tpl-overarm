@@ -222,7 +222,7 @@ export default function RegistrationForm() {
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           I am registering as <span className="text-red-500">*</span>
         </label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {([
             { value: "Player", desc: "I want to play in the tournament" },
             { value: "Spectator", desc: "I want to watch the tournament" },
@@ -644,7 +644,178 @@ export default function RegistrationForm() {
       </div>
         </>
       )}
+{registrationType === "Team Owner" && (
+  <>
+    <SectionLabel label="Team Owner Details" />
+<>
+  {/* Important Information */}
+{/* Important Information */}
+<div className="rounded-2xl border border-green-200 bg-green-50 p-5 space-y-5">
+  <div className="flex items-start gap-3">
+    <div className="mt-0.5">
+      <svg
+        className="w-5 h-5 text-green-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 16h-1v-4h-1m1-4h.01M12 20h.01M12 3a9 9 0 100 18 9 9 0 000-18z"
+        />
+      </svg>
+    </div>
 
+    <div className="flex-1 space-y-5">
+
+      {/* Heading */}
+      <div>
+        <h3 className="text-lg font-bold text-green-900">
+          Important Information for Team Owners
+        </h3>
+      </div>
+
+      {/* Benefits */}
+      <div className="rounded-xl border border-green-100 bg-white p-4">
+        <h4 className="text-sm font-bold text-gray-900 mb-3">
+          Team Owner Benefits
+        </h4>
+
+        <ul className="space-y-2 text-sm text-gray-700">
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+            Team Owners are allowed to play for their own team.
+          </li>
+
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+            Participation in the Player Auction Event included.
+          </li>
+        </ul>
+      </div>
+
+      {/* Ownership Fee */}
+      <div className="rounded-xl border border-green-100 bg-white p-4">
+        <h4 className="text-sm font-bold text-gray-900 mb-2">
+          Team Ownership Fee
+        </h4>
+
+        <div className="text-3xl font-extrabold text-green-700 mb-2">
+          ₹15,000
+        </div>
+
+        <p className="text-sm text-gray-600 leading-relaxed">
+          Includes{" "}
+          <span className="font-semibold text-gray-800">
+            5 Crore Auction Credits
+          </span>{" "}
+          to build your squad during the auction.
+        </p>
+      </div>
+
+      {/* Top Ups */}
+      <div className="rounded-xl border border-green-100 bg-white p-4">
+        <h4 className="text-sm font-bold text-gray-900 mb-3">
+          Optional Auction Credit Top-Ups
+        </h4>
+
+        <p className="text-sm text-gray-600 mb-4">
+          Increase your bidding power during the auction:
+        </p>
+
+        <div className="space-y-3">
+
+          <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
+            <span className="font-semibold text-gray-800">
+              ₹2,500
+            </span>
+
+            <span className="text-sm text-gray-600">
+              Additional 2 Crore Credits
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
+            <span className="font-semibold text-gray-800">
+              ₹1,500
+            </span>
+
+            <span className="text-sm text-gray-600">
+              Additional 1 Crore Credits
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
+            <span className="font-semibold text-gray-800">
+              ₹1,000
+            </span>
+
+            <span className="text-sm text-gray-600">
+              Additional 50 Lakh Credits
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Notes */}
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <h4 className="text-sm font-bold text-amber-900 mb-3">
+          Important Notes
+        </h4>
+
+        <ul className="space-y-2 text-sm text-amber-800">
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            No top-up options beyond the limits mentioned above.
+          </li>
+
+          <li className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+            Unused auction credits are non-refundable.
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <SectionLabel label="Team Owner Details" />
+
+  {/* Team Name */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+      Team Name <span className="text-red-500">*</span>
+    </label>
+
+    <input
+      {...register("teamName")}
+      type="text"
+      placeholder="Enter your team name"
+      className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none transition-all focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-100"
+    />
+
+    {errors.teamName && (
+      <p className="mt-1 text-xs text-red-500">
+        {errors.teamName.message}
+      </p>
+    )}
+  </div>
+</>
+   
+
+   
+
+   
+
+    
+
+    
+  </>
+)}
       {/* Submit Error */}
       {submitError && (
         <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
@@ -653,23 +824,57 @@ export default function RegistrationForm() {
       )}
 
       {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={isSubmitting || isUploading}
-        className="w-full rounded-xl bg-green-600 px-6 py-4 text-sm font-bold text-white shadow-sm transition-all hover:bg-green-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+    {/* Submit Button */}
+<button
+  type="submit"
+  disabled={isSubmitting || isUploading}
+  className={`w-full rounded-xl px-6 py-4 text-sm font-bold text-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+    registrationType === "Team Owner"
+      ? "bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 focus:ring-emerald-500"
+      : "bg-green-600 hover:bg-green-700 focus:ring-green-500"
+  }`}
+>
+  {isSubmitting ? (
+    <span className="flex items-center justify-center gap-2">
+      <svg
+        className="w-4 h-4 animate-spin"
+        fill="none"
+        viewBox="0 0 24 24"
       >
-        {isSubmitting ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            Processing
-          </span>
-        ) : (
-          "Pay Rs 500 and Register"
-        )}
-      </button>
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        />
+      </svg>
+
+      {registrationType === "Team Owner"
+        ? "Processing Team Registration..."
+        : "Processing"}
+    </span>
+  ) : registrationType === "Team Owner" ? (
+    <div className="flex flex-col items-center justify-center leading-tight">
+      <span className="text-base font-extrabold">
+        Pay ₹15,000 and Register as Team Owner
+      </span>
+
+      <span className="text-[11px] font-medium text-green-100 mt-1">
+        Includes 5 Crore Auction Credits
+      </span>
+    </div>
+  ) : (
+    "Pay Rs 500 and Register"
+  )}
+</button>
     </form>
   );
 }

@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const registrationSchema = z
   .object({
-    registrationType: z.enum(["Player", "Spectator"], { error: "Please select a registration type" }),
+    registrationType: z.enum(
+      ["Player", "Spectator", "Team Owner"],
+      { error: "Please select a registration type" }
+    ),
 
     fullName: z
       .string()
@@ -11,17 +14,22 @@ export const registrationSchema = z
 
     age: z.preprocess(
       (value) => {
-        if (value === "" || value === null || value === undefined) return undefined;
+        if (value === "" || value === null || value === undefined)
+          return undefined;
+
         const num = Number(value);
         return isNaN(num) ? undefined : num;
       },
-      z.number({ error: "Age is required" })
+      z
+        .number({ error: "Age is required" })
         .int("Age must be a whole number")
         .positive("Age must be a positive number")
         .max(100, "Age must be 100 or less")
     ),
 
-    gender: z.enum(["Male", "Female"], { error: "Please select a gender" }),
+    gender: z.enum(["Male", "Female"], {
+      error: "Please select a gender",
+    }),
 
     contactNumber: z
       .string()
@@ -32,50 +40,124 @@ export const registrationSchema = z
       .min(2, "Company name must be at least 2 characters")
       .max(100, "Company name must be at most 100 characters"),
 
-    jerseySize: z.enum(["S", "M", "L", "XL", "XXL", "XXXL"], { error: "Please select a jersey size" }),
+    jerseySize: z.enum(
+      ["S", "M", "L", "XL", "XXL", "XXXL"],
+      { error: "Please select a jersey size" }
+    ),
 
     jerseyNumber: z
       .string()
-      .regex(/^(0[1-9]|[1-9][0-9])$/, "Jersey number must be between 01 and 99"),
+      .regex(
+        /^(0[1-9]|[1-9][0-9])$/,
+        "Jersey number must be between 01 and 99"
+      ),
 
     jerseyName: z
       .string()
       .min(1, "Name on jersey is required")
       .max(15, "Name on jersey must be at most 15 characters"),
 
-    photoUrl: z
-      .string()
-      .min(1, "Please upload your photo"),
+    photoUrl: z.string().min(1, "Please upload your photo"),
 
-    // Player-only fields
-    playingExpertise: z.enum(["Batting", "Bowling", "Fielding", "All Rounder"]).optional(),
+    // =========================
+    // PLAYER FIELDS
+    // =========================
+
+    playingExpertise: z
+      .enum(["Batting", "Bowling", "Fielding", "All Rounder"])
+      .optional(),
 
     battingSkills: z.coerce.number().int().min(1).max(10).optional(),
+
     bowlingSkills: z.coerce.number().int().min(1).max(10).optional(),
+
     fieldingSkills: z.coerce.number().int().min(1).max(10).optional(),
 
     cricheroProfile: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.registrationType !== "Player") return;
 
-    if (!data.playingExpertise) {
-      ctx.addIssue({ code: "custom", message: "Please select a playing expertise", path: ["playingExpertise"] });
+    // =========================
+    // TEAM OWNER FIELDS
+    // =========================
+
+    teamName: z.string().optional(),
+
+    
+  })
+
+  .superRefine((data, ctx) => {
+
+    // ======================================
+    // PLAYER VALIDATION
+    // ======================================
+
+    if (data.registrationType === "Player") {
+
+      if (!data.playingExpertise) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Please select a playing expertise",
+          path: ["playingExpertise"],
+        });
+      }
+
+      if (data.battingSkills === undefined) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Please rate your batting skills",
+          path: ["battingSkills"],
+        });
+      }
+
+      if (data.bowlingSkills === undefined) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Please rate your bowling skills",
+          path: ["bowlingSkills"],
+        });
+      }
+
+      if (data.fieldingSkills === undefined) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Please rate your fielding skills",
+          path: ["fieldingSkills"],
+        });
+      }
+
+      if (
+        !data.cricheroProfile ||
+        data.cricheroProfile.trim().length < 1
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Cricheros profile is required",
+          path: ["cricheroProfile"],
+        });
+      } else if (data.cricheroProfile.length > 200) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Cricheros profile must be at most 200 characters",
+          path: ["cricheroProfile"],
+        });
+      }
     }
-    if (data.battingSkills === undefined) {
-      ctx.addIssue({ code: "custom", message: "Please rate your batting skills", path: ["battingSkills"] });
-    }
-    if (data.bowlingSkills === undefined) {
-      ctx.addIssue({ code: "custom", message: "Please rate your bowling skills", path: ["bowlingSkills"] });
-    }
-    if (data.fieldingSkills === undefined) {
-      ctx.addIssue({ code: "custom", message: "Please rate your fielding skills", path: ["fieldingSkills"] });
-    }
-    if (!data.cricheroProfile || data.cricheroProfile.trim().length < 1) {
-      ctx.addIssue({ code: "custom", message: "Cricheros profile is required", path: ["cricheroProfile"] });
-    } else if (data.cricheroProfile.length > 200) {
-      ctx.addIssue({ code: "custom", message: "Cricheros profile must be at most 200 characters", path: ["cricheroProfile"] });
+
+    // ======================================
+    // TEAM OWNER VALIDATION
+    // ======================================
+
+    if (data.registrationType === "Team Owner") {
+      if (!data.teamName || data.teamName.trim().length < 2) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Team name is required",
+          path: ["teamName"],
+        });
+      }
     }
   });
 
-export type RegistrationFormData = z.infer<typeof registrationSchema>;
+export type RegistrationFormData = z.infer<
+  typeof registrationSchema
+>;

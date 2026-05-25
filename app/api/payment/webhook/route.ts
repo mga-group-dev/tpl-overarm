@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
     event.payload.payment.entity;
 
   const isPlayer = notes.rt === "Player";
+  const isTeamOwner = notes.rt === "Team Owner";
   const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
   try {
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
       isPlayer ? (notes.bs  ?? "") : "",
       isPlayer ? (notes.bw  ?? "") : "",
       isPlayer ? (notes.fs  ?? "") : "",
+     isTeamOwner ? (notes.tn ?? "") : "",
       notes.js  ?? "",
       notes.jn  ?? "",
       notes.jnm ?? "",
