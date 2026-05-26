@@ -461,7 +461,7 @@ const registrationAmount =
       )}
 
       {/* None */}
-      <label className="flex items-start gap-3 rounded-xl border  p-4 cursor-pointer bg-white">
+      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
         <input
           {...register("eligibilityCategory")}
           type="radio"
