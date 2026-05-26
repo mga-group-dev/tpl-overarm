@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       razorpay_payment_id,
       razorpay_signature,
       formData,
-        isFreeRegistration,
+        isFreeRegistration = false,
     } = body;
 
     // Validate presence of required fields
@@ -111,6 +111,14 @@ const registrationAmount =
     ? 500
     : 0;
 
+    const shouldBeFree = registrationAmount === 0;
+
+if (shouldBeFree !== isFreeRegistration) {
+  return NextResponse.json(
+    { error: "Invalid registration payment type" },
+    { status: 400 }
+  );
+}
 // =================================
 // PAYMENT STATUS
 // =================================
@@ -159,12 +167,13 @@ await appendRegistration([
 
   // Payment
 
+// Payment
+
 isFreeRegistration ? "" : razorpay_payment_id,
 isFreeRegistration ? "" : razorpay_order_id,
-  // Eligibility
-  isFreeRegistration
-    ? "Yes"
-    : "No",
+
+// Free Registration
+isFreeRegistration ? "Free" : "Paid",
   data.eligibilityCategory ?? "",
   data.gstNumber ?? "",
   data.salaryCompanyName ?? "",

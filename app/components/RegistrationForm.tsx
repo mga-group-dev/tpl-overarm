@@ -47,7 +47,7 @@ export default function RegistrationForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [registrationAmt, setRegistrationAmt] = useState<number>(0);
+ 
 
   const {
     register,
@@ -139,7 +139,7 @@ const registrationAmount =
     : data.eligibilityCategory === "None"
     ? 500
     : 0;
-    setRegistrationAmt(amount);
+   
 
     try {
       // 1. Create Razorpay order (form data is stored in order notes so the
@@ -206,7 +206,7 @@ const registrationAmount =
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   formData: getValues(),
-                   isFreeRegistration: registrationAmt === 0,
+                   isFreeRegistration:false,
                 }),
               });
               const verifyData = await verifyRes.json();
