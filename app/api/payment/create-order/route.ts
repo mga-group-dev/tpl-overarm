@@ -58,9 +58,10 @@ export async function POST(request: NextRequest) {
       jn:  d.jerseyNumber,
       jnm: d.jerseyName,
       pu:  d.photoUrl.slice(0, 256),
-      cp:  d.cricheroProfile ?? "",
-        tn: d.teamName ?? "",
+      tn: d.teamName ?? "",
     };
+
+    // cp:  d.cricheroProfile ?? "",
 
     const amount =
   d.registrationType === "Team Owner"
