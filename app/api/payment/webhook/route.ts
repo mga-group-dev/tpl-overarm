@@ -66,25 +66,50 @@ export async function POST(request: NextRequest) {
 
   try {
     await appendRegistration([
-      timestamp,
-      notes.rt  ?? "",
-      notes.fn  ?? "",
-      notes.ag  ?? "",
-      notes.gn  ?? "",
-      notes.cn  ?? "",
-      notes.co  ?? "",
-      isPlayer ? (notes.pe  ?? "") : "",
-      isPlayer ? (notes.bs  ?? "") : "",
-      isPlayer ? (notes.bw  ?? "") : "",
-      isPlayer ? (notes.fs  ?? "") : "",
-     isTeamOwner ? (notes.tn ?? "") : "",
-      notes.js  ?? "",
-      notes.jn  ?? "",
-      notes.jnm ?? "",
-      notes.pu  ?? "",
-      isPlayer ? (notes.cp  ?? "") : "",
-      razorpay_payment_id,
-      razorpay_order_id,
+        timestamp,
+
+  // Basic Details
+  notes.rt ?? "",
+  notes.fn ?? "",
+  notes.ag ?? "",
+  notes.gn ?? "",
+  notes.cn ?? "",
+  notes.co ?? "",
+
+  // Cricket Details
+  isPlayer ? (notes.pe ?? "") : "",
+  isPlayer ? (notes.bs ?? "") : "",
+  isPlayer ? (notes.bw ?? "") : "",
+  isPlayer ? (notes.fs ?? "") : "",
+
+  // Jersey
+  notes.js ?? "",
+  notes.jn ?? "",
+  notes.jnm ?? "",
+
+  // Profile
+  notes.pu ?? "",
+
+  // Crichero
+  isPlayer ? (notes.cp ?? "") : "",
+
+  // Payment
+  razorpay_payment_id,
+  razorpay_order_id,
+
+  // Payment Status
+  "Paid",
+
+  // Eligibility
+  notes.ec ?? "",
+  notes.gst ?? "",
+  notes.scn ?? "",
+  notes.des ?? "",
+  notes.dpi ?? "",
+  notes.tm ?? "",
+
+  // Team Owner
+  notes.tn ?? "",
     ]);
   } catch (error) {
     console.error("Webhook: failed to append to Google Sheets:", error);

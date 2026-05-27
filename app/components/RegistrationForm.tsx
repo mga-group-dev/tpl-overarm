@@ -128,112 +128,191 @@ const registrationAmount =
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  async function onSubmit(data: RegistrationFormData) {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    const amount =
-  data.registrationType === "Team Owner"
-    ? 15000
-    : data.registrationType === "Spectator"
-    ? 500
-    : data.eligibilityCategory === "None"
-    ? 500
-    : 0;
-   
+ async function onSubmit(data: RegistrationFormData) {
+  setIsSubmitting(true);
+  setSubmitError(null);
 
-    try {
-      // 1. Create Razorpay order (form data is stored in order notes so the
-      //    webhook can record the registration even if the user leaves the page)
-      if (amount === 0) {
-  const res = await fetch("/api/payment/verify", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      formData: data,
-      isFreeRegistration: true,
-    }),
-  });
+  const amount =
+    data.registrationType === "Team Owner"
+      ? 15000
+      : data.registrationType === "Spectator"
+      ? 500
+      : data.eligibilityCategory === "None"
+      ? 500
+      : 0;
 
-  const result = await res.json();
-
-  if (!res.ok) {
-    throw new Error(result.error || "Registration failed");
-  }
-
-  setIsSuccess(true);
-  return;
-}
-      const orderRes = await fetch("/api/payment/create-order", {
+  try {
+    // =========================================
+    // FREE REGISTRATION FLOW
+    // =========================================
+    if (amount === 0) {
+      const res = await fetch("/api/payment/verify", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formData: data }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formData: data,
+          isFreeRegistration: true,
+        }),
       });
-      const orderData = await orderRes.json();
-      if (!orderRes.ok) throw new Error(orderData.error ?? "Failed to create order");
 
-      // 2. Load Razorpay script
-      const loaded = await loadRazorpayScript();
-      if (!loaded) throw new Error("Failed to load Razorpay checkout. Please refresh and try again.");
+      const result = await res.json();
 
-      // 3. Open checkout modal
-      await new Promise<void>((resolve, reject) => {
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          name: "Tax Sahi Hai® TPL 3.0",
-          description: "Tournament Registration Fee",
-          order_id: orderData.orderId,
-          prefill: {
-            name: data.fullName,
-            contact: data.contactNumber,
-          },
-          theme: { color: "#16a34a" },
-          handler: async (response: {
-            razorpay_order_id: string;
-            razorpay_payment_id: string;
-            razorpay_signature: string;
-          }) => {
-            try {
-              // 4. Verify payment on server
-              const verifyRes = await fetch("/api/payment/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  formData: getValues(),
-                   isFreeRegistration:false,
-                }),
-              });
-              const verifyData = await verifyRes.json();
-              if (!verifyRes.ok) throw new Error(verifyData.error ?? "Payment verification failed");
-              resolve();
-            } catch (err) {
-              reject(err);
-            }
-          },
-          modal: {
-            ondismiss: () => reject(new Error("Payment was cancelled.")),
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      });
+      if (!res.ok) {
+        throw new Error(
+          result.error || "Registration failed"
+        );
+      }
 
       setIsSuccess(true);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Something went wrong";
-      setSubmitError(message);
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
-  }
 
+    // =========================================
+    // PAID REGISTRATION FLOW
+    // =========================================
+
+    // 1. Create Razorpay Order
+    const orderRes = await fetch(
+      "/api/payment/create-order",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formData: data,
+        }),
+      }
+    );
+
+    const orderData = await orderRes.json();
+
+    if (!orderRes.ok) {
+      throw new Error(
+        orderData.error ||
+          "Failed to create order"
+      );
+    }
+
+    // 2. Load Razorpay Script
+    const loaded = await loadRazorpayScript();
+
+    if (!loaded) {
+      throw new Error(
+        "Failed to load Razorpay checkout. Please refresh and try again."
+      );
+    }
+
+    // 3. Open Razorpay Checkout
+    await new Promise<void>((resolve, reject) => {
+      const options = {
+        key: process.env
+          .NEXT_PUBLIC_RAZORPAY_KEY_ID,
+
+        amount: orderData.amount,
+
+        currency: orderData.currency,
+
+        name: "Tax Sahi Hai® TPL 3.0",
+
+        description:
+          "Tournament Registration Fee",
+
+        order_id: orderData.orderId,
+
+        prefill: {
+          name: data.fullName,
+          contact: data.contactNumber,
+        },
+
+        theme: {
+          color: "#16a34a",
+        },
+
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            // =========================================
+            // VERIFY PAYMENT ONLY
+            // =========================================
+
+            const verifyRes = await fetch(
+              "/api/payment/verify",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+                },
+
+                body: JSON.stringify({
+                  razorpay_order_id:
+                    response.razorpay_order_id,
+
+                  razorpay_payment_id:
+                    response.razorpay_payment_id,
+
+                  razorpay_signature:
+                    response.razorpay_signature,
+                }),
+              }
+            );
+
+            const verifyData =
+              await verifyRes.json();
+
+            if (!verifyRes.ok) {
+              throw new Error(
+                verifyData.error ||
+                  "Payment verification failed"
+              );
+            }
+
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
+        },
+
+        modal: {
+          ondismiss: () =>
+            reject(
+              new Error(
+                "Payment was cancelled."
+              )
+            ),
+        },
+      };
+
+      const rzp = new window.Razorpay(
+        options
+      );
+
+      rzp.open();
+    });
+
+    // =========================================
+    // SHOW SUCCESS SCREEN
+    // =========================================
+
+    setIsSuccess(true);
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error
+        ? err.message
+        : "Something went wrong";
+
+    setSubmitError(message);
+  } finally {
+    setIsSubmitting(false);
+  }
+}
   if (isSuccess) {
     return (
       <div className="py-8 text-center space-y-5">
