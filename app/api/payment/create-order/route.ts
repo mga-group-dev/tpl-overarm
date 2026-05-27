@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const amount =
   d.registrationType === "Team Owner"
     ? 1500000 // ₹15,000 in paise
-    : 100; // ₹500 in paise
+    : 50000; // ₹500 in paise
 
 
     const order = await razorpay.orders.create({
