@@ -52,11 +52,6 @@ export default function Home() {
             </p>
 
             <div className="h-px bg-gray-100" />
-
-        
-
-          
-
             
           </div>
         </div>

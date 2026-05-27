@@ -140,8 +140,6 @@ await appendRegistration([
   data.contactNumber,
   data.companyName ?? "",
 
-
-
   // Cricket Details
   isPlayer ? (data.playingExpertise ?? "") : "",
   isPlayer
@@ -163,12 +161,7 @@ await appendRegistration([
   data.photoUrl,
   isPlayer ? (data.cricheroProfile ?? "") : "",
 
- 
-
   // Payment
-
-// Payment
-
 isFreeRegistration ? "" : razorpay_payment_id,
 isFreeRegistration ? "" : razorpay_order_id,
 
@@ -180,6 +173,7 @@ isFreeRegistration ? "Free" : "Paid",
   data.designation ?? "",
   data.dpiitCertificate ?? "",
   data.trademarkCertificate ?? "",
+  
     // Team Owner
   data.teamName ?? "",
 ]);
