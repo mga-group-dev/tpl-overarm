@@ -67,7 +67,6 @@ export async function POST(request: NextRequest) {
   try {
     await appendRegistration([
         timestamp,
-
   // Basic Details
   notes.rt ?? "",
   notes.fn ?? "",
@@ -75,31 +74,24 @@ export async function POST(request: NextRequest) {
   notes.gn ?? "",
   notes.cn ?? "",
   notes.co ?? "",
-
   // Cricket Details
   isPlayer ? (notes.pe ?? "") : "",
   isPlayer ? (notes.bs ?? "") : "",
   isPlayer ? (notes.bw ?? "") : "",
   isPlayer ? (notes.fs ?? "") : "",
-
   // Jersey
   notes.js ?? "",
   notes.jn ?? "",
   notes.jnm ?? "",
-
   // Profile
   notes.pu ?? "",
-
   // Crichero
   isPlayer ? (notes.cp ?? "") : "",
-
   // Payment
   razorpay_payment_id,
   razorpay_order_id,
-
   // Payment Status
   "Paid",
-
   // Eligibility
   notes.ec ?? "",
   notes.gst ?? "",
@@ -107,7 +99,6 @@ export async function POST(request: NextRequest) {
   notes.des ?? "",
   notes.dpi ?? "",
   notes.tm ?? "",
-
   // Team Owner
   notes.tn ?? "",
     ]);

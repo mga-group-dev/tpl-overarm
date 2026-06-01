@@ -77,49 +77,37 @@ export async function POST(request: NextRequest) {
         data.gender,
         data.contactNumber,
         data.companyName ?? "",
-
         isPlayer
           ? data.playingExpertise ?? ""
           : "",
-
         isPlayer
           ? data.battingSkills?.toString() ??
               ""
           : "",
-
         isPlayer
           ? data.bowlingSkills?.toString() ??
               ""
           : "",
-
         isPlayer
           ? data.fieldingSkills?.toString() ??
               ""
           : "",
-
         data.jerseySize,
         data.jerseyNumber,
         data.jerseyName,
-
         data.photoUrl,
-
         isPlayer
           ? data.cricheroProfile ?? ""
           : "",
-
         "", // payment id
-
         "", // order id
-
         "Free",
-
         data.eligibilityCategory ?? "",
         data.gstNumber ?? "",
         data.salaryCompanyName ?? "",
         data.designation ?? "",
         data.dpiitCertificate ?? "",
         data.trademarkCertificate ?? "",
-
         data.teamName ?? "",
       ]);
 
