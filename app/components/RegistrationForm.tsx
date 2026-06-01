@@ -1053,7 +1053,7 @@ Verification Note :</span>
 
           <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
             <span className="font-semibold text-gray-800">
-              ₹2,500
+              ₹7,500
             </span>
 
             <span className="text-sm text-gray-600">
@@ -1063,7 +1063,7 @@ Verification Note :</span>
 
           <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
             <span className="font-semibold text-gray-800">
-              ₹1,500
+              ₹5,000
             </span>
 
             <span className="text-sm text-gray-600">
@@ -1073,7 +1073,7 @@ Verification Note :</span>
 
           <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
             <span className="font-semibold text-gray-800">
-              ₹1,000
+              ₹2,500
             </span>
 
             <span className="text-sm text-gray-600">
