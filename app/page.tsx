@@ -41,7 +41,7 @@ export default function Home() {
               <p className="text-xs font-semibold uppercase tracking-wide text-amber-500 mb-1">
                 Registration Closes
               </p>
-              <p className="font-bold text-gray-900">5th June 2026</p>
+              <p className="font-bold text-gray-900">8th June 2026</p>
             </div>
           </div>
 
