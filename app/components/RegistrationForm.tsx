@@ -1190,9 +1190,7 @@ Verification Note :</span>
         Pay ₹10,000 and Register as Team Owner
       </span>
 
-      <span className="text-[11px] font-medium text-green-100 mt-1">
-        Includes 5 Crore Auction Credits
-      </span>
+      
     </div>
   ) : registrationAmount === 0 ? (
     "Register for Free"
