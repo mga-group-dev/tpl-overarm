@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     const amount =
   d.registrationType === "Team Owner"
-    ? 100000 // ₹15,000 in paise
+    ? 1000000 // ₹10,000 in paise
     : 50000; // ₹500 in paise
 
 

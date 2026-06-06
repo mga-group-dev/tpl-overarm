@@ -70,7 +70,7 @@ export default function RegistrationForm() {
 
 const registrationAmount =
   registrationType === "Team Owner"
-    ? 15000
+    ? 10000
     : registrationType === "Spectator"
     ? 500
     : isPlayerWithNoEligibility
@@ -134,7 +134,7 @@ const registrationAmount =
 
   const amount =
     data.registrationType === "Team Owner"
-      ? 15000
+      ? 10000
       : data.registrationType === "Spectator"
       ? 500
       : data.eligibilityCategory === "None"
@@ -1028,7 +1028,7 @@ Verification Note :</span>
         </h4>
 
         <div className="text-3xl font-extrabold text-green-700 mb-2">
-          ₹15,000
+          ₹10,000
         </div>
 
         <p className="text-sm text-gray-600 leading-relaxed">
@@ -1187,7 +1187,7 @@ Verification Note :</span>
   ) : registrationType === "Team Owner" ? (
     <div className="flex flex-col items-center justify-center leading-tight">
       <span className="text-base font-extrabold">
-        Pay ₹15,000 and Register as Team Owner
+        Pay ₹10,000 and Register as Team Owner
       </span>
 
       <span className="text-[11px] font-medium text-green-100 mt-1">
