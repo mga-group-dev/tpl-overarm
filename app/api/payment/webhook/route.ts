@@ -67,35 +67,35 @@ export async function POST(request: NextRequest) {
 
   try {
     // TODO: Re-enable when new Google Sheet is set up
-    // await appendRegistration([
-    //     timestamp,
-    //   // Basic Details
-    //   notes.rt ?? "",
-    //   notes.fn ?? "",
-    //   notes.ag ?? "",
-    //   notes.gn ?? "",
-    //   notes.cn ?? "",
-    //   notes.co ?? "",
-    //   // Cricket Details
-    //   isPlayer ? (notes.pe ?? "") : "",
-    //   isPlayer ? (notes.bs ?? "") : "",
-    //   isPlayer ? (notes.bw ?? "") : "",
-    //   isPlayer ? (notes.fs ?? "") : "",
-    //   // Jersey
-    //   notes.js ?? "",
-    //   notes.jn ?? "",
-    //   notes.jnm ?? "",
-    //   // Profile
-    //   notes.pu ?? "",
-    //   // Crichero
-    //   isPlayer ? (notes.cp ?? "") : "",
-    //   // Payment
-    //   razorpay_payment_id,
-    //   razorpay_order_id,
-    //   // Payment Status
-    //   // Team Owner
-    //   notes.tn ?? "",
-    //     ]);
+    await appendRegistration([
+        timestamp,
+      // Basic Details
+      notes.rt ?? "",
+      notes.fn ?? "",
+      notes.ag ?? "",
+      notes.gn ?? "",
+      notes.cn ?? "",
+      notes.co ?? "",
+      // Cricket Details
+      isPlayer ? (notes.pe ?? "") : "",
+      isPlayer ? (notes.bs ?? "") : "",
+      isPlayer ? (notes.bw ?? "") : "",
+      isPlayer ? (notes.fs ?? "") : "",
+      // Jersey
+      notes.js ?? "",
+      notes.jn ?? "",
+      notes.jnm ?? "",
+      // Profile
+      notes.pu ?? "",
+      // Crichero
+      isPlayer ? (notes.cp ?? "") : "",
+      // Payment
+      razorpay_payment_id,
+      razorpay_order_id,
+      // Payment Status
+      // Team Owner
+      notes.tn ?? "",
+        ]);
     console.log("Webhook: Sheet storage disabled - skipping appendRegistration");
   } catch (error) {
     console.error("Webhook: failed to append to Google Sheets:", error);
