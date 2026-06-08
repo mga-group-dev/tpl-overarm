@@ -68,42 +68,44 @@ export async function POST(request: NextRequest) {
           timeZone: "Asia/Kolkata",
         });
 
-      // Store FREE registration only
-      await appendRegistration([
-        timestamp,
-        data.registrationType,
-        data.fullName,
-        String(data.age),
-        data.gender,
-        data.contactNumber,
-        data.companyName ?? "",
-        isPlayer
-          ? data.playingExpertise ?? ""
-          : "",
-        isPlayer
-          ? data.battingSkills?.toString() ??
-              ""
-          : "",
-        isPlayer
-          ? data.bowlingSkills?.toString() ??
-              ""
-          : "",
-        isPlayer
-          ? data.fieldingSkills?.toString() ??
-              ""
-          : "",
-        data.jerseySize,
-        data.jerseyNumber,
-        data.jerseyName,
-        data.photoUrl,
-        isPlayer
-          ? data.cricheroProfile ?? ""
-          : "",
-        "", // payment id
-        "", // order id
-        "Free",
-        data.teamName ?? "",
-      ]);
+      // TODO: Re-enable when new Google Sheet is set up
+      // // Store FREE registration only
+      // await appendRegistration([
+      //   timestamp,
+      //   data.registrationType,
+      //   data.fullName,
+      //   String(data.age),
+      //   data.gender,
+      //   data.contactNumber,
+      //   data.companyName ?? "",
+      //   isPlayer
+      //     ? data.playingExpertise ?? ""
+      //     : "",
+      //   isPlayer
+      //     ? data.battingSkills?.toString() ??
+      //         ""
+      //     : "",
+      //   isPlayer
+      //     ? data.bowlingSkills?.toString() ??
+      //         ""
+      //     : "",
+      //   isPlayer
+      //     ? data.fieldingSkills?.toString() ??
+      //         ""
+      //     : "",
+      //   data.jerseySize,
+      //   data.jerseyNumber,
+      //   data.jerseyName,
+      //   data.photoUrl,
+      //   isPlayer
+      //     ? data.cricheroProfile ?? ""
+      //     : "",
+      //   "", // payment id
+      //   "", // order id
+      //   "Free",
+      //   data.teamName ?? "",
+      // ]);
+      console.log("Verify: Free registration skipped sheet storage");
 
       return NextResponse.json({
         success: true,
