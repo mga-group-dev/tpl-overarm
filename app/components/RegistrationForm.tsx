@@ -131,7 +131,7 @@ const registrationAmount =
       ? 10000
       : data.registrationType === "Player"
       ? 500
-      : 0;
+      : 500;
 
   try {
     // =========================================
