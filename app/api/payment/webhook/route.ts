@@ -95,18 +95,8 @@ export async function POST(request: NextRequest) {
       // Payment Status
       // Team Owner
       notes.tn ?? "",
-      // Padding columns (21-27)
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      // Column 28 - Form Submission Status
-      "Yes",
         ]);
-    console.log("Webhook: Registration data recorded with column 28 marked as Yes");
+    console.log("Webhook: Sheet storage disabled - skipping appendRegistration");
   } catch (error) {
     console.error("Webhook: failed to append to Google Sheets:", error);
     // Returning 500 causes Razorpay to retry the webhook automatically
