@@ -54,4 +54,57 @@ export async function POST(request: NextRequest) {
   const event = JSON.parse(rawBody) as WebhookPayload;
 
   // Acknowledge events we don't handle so Razorpay doesn't retry them
+  if (event.event !== "payment.captured") {
+    return NextResponse.json({ received: true });
+  }
+
+  const { id: razorpay_payment_id, order_id: razorpay_order_id, notes } =
+    event.payload.payment.entity;
+
+  const isPlayer = notes.rt === "Player";
+  const isTeamOwner = notes.rt === "Team Owner";
+  const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+  try {
+    // TODO: Re-enable when new Google Sheet is set up
+    await appendRegistration([
+        timestamp,
+      // Basic Details
+      notes.rt ?? "",
+      notes.fn ?? "",
+      notes.ag ?? "",
+      notes.gn ?? "",
+      notes.cn ?? "",
+      notes.co ?? "",
+      // Cricket Details
+      isPlayer ? (notes.pe ?? "") : "",
+      isPlayer ? (notes.bs ?? "") : "",
+      isPlayer ? (notes.bw ?? "") : "",
+      isPlayer ? (notes.fs ?? "") : "",
+      // Jersey
+      notes.js ?? "",
+      notes.jn ?? "",
+      notes.jnm ?? "",
+      // Profile
+      notes.pu ?? "",
+      // Crichero
+      isPlayer ? (notes.cp ?? "") : "",
+      // Payment
+      razorpay_payment_id,
+      razorpay_order_id,
+      // Payment Status
+      // Team Owner
+      notes.tn ?? "",
+        ]);
+    console.log("Webhook: Sheet storage disabled - skipping appendRegistration");
+  } catch (error) {
+    console.error("Webhook: failed to append to Google Sheets:", error);
+    // Returning 500 causes Razorpay to retry the webhook automatically
+    return NextResponse.json(
+      { error: "Failed to record registration" },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ received: true });
 }
