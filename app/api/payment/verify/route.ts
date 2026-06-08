@@ -102,12 +102,6 @@ export async function POST(request: NextRequest) {
         "", // payment id
         "", // order id
         "Free",
-        data.eligibilityCategory ?? "",
-        data.gstNumber ?? "",
-        data.salaryCompanyName ?? "",
-        data.designation ?? "",
-        data.dpiitCertificate ?? "",
-        data.trademarkCertificate ?? "",
         data.teamName ?? "",
       ]);
 

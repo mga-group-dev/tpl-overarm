@@ -63,17 +63,11 @@ export default function RegistrationForm() {
   });
 
   const registrationType = watch("registrationType");
-  const eligibilityCategory = watch("eligibilityCategory");
-  const isPlayerWithNoEligibility =
-  registrationType === "Player" &&
-  eligibilityCategory === "None";
 
 const registrationAmount =
   registrationType === "Team Owner"
     ? 10000
-    : registrationType === "Spectator"
-    ? 500
-    : isPlayerWithNoEligibility
+    : registrationType === "Player"
     ? 500
     : 0;
 
@@ -135,40 +129,11 @@ const registrationAmount =
   const amount =
     data.registrationType === "Team Owner"
       ? 10000
-      : data.registrationType === "Spectator"
-      ? 500
-      : data.eligibilityCategory === "None"
+      : data.registrationType === "Player"
       ? 500
       : 0;
 
   try {
-    // =========================================
-    // FREE REGISTRATION FLOW
-    // =========================================
-    if (amount === 0) {
-      const res = await fetch("/api/payment/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          formData: data,
-          isFreeRegistration: true,
-        }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(
-          result.error || "Registration failed"
-        );
-      }
-
-      setIsSuccess(true);
-      return;
-    }
-
     // =========================================
     // PAID REGISTRATION FLOW
     // =========================================
@@ -352,11 +317,10 @@ const registrationAmount =
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           I am registering as <span className="text-red-500">*</span>
         </label>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {([
             { value: "Player", desc: "I want to play in the tournament" },
-            { value: "Spectator", desc: "I want to watch the tournament" },
-              { value: "Team Owner", desc: "I want to own/manage a team" },
+            { value: "Team Owner", desc: "I want to own/manage a team" },
           ] as const).map(({ value, desc }) => (
             <label
               key={value}
@@ -380,201 +344,11 @@ const registrationAmount =
         )}
       </div>
       {registrationType === "Player" && (
-        <> 
-        
+        <>
+          <SectionLabel label="Personal Information" />
+        </>
 
-        
-        
-        {/* <SectionLabel label="Eligibility Verification"  /> */}
-        <div className="rounded-2xl bg-white shadow border border-gray-100 overflow-hidden">
-          <div className="bg-linear-to-r from-green-600 to-emerald-500 px-8 py-5">
-            <h2 className="text-lg font-bold text-white">Eligiblity Category</h2>
-           
-          </div>
-          </div>
-
-    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-5">
-
-      {/* GST */}
-      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
-        <input
-          {...register("eligibilityCategory")}
-          type="radio"
-          value="GST Registered Business Owner"
-          className="mt-1 accent-green-600"
-           
-        />
-
-        <div>
-          <p className="font-semibold text-sm text-gray-800">
-            GST Registered Business Owner
-          </p>
-        </div>
-      </label>
-
-      {eligibilityCategory === "GST Registered Business Owner" && (
-        <div>
-          <input
-            {...register("gstNumber")}
-            required={eligibilityCategory === "GST Registered Business Owner"}
-            type="text"
-            placeholder="Enter GST Number"
-            
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
-          />
-
-          {errors.gstNumber && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.gstNumber.message}
-            </p>
-          )}
-        </div>
       )}
-
-      {/* Salaried */}
-      <label className="flex items-start gap-3 rounded-xl border text-black border-gray-200 bg-white p-4 cursor-pointer">
-        <input
-          {...register("eligibilityCategory")}
-          type="radio"
-          value="Salaried Professional"
-          
-          className="mt-1 accent-green-600"
-        />
-
-        <div>
-          <p className="font-semibold text-sm text-gray-800">
-            Salaried Professional (₹30L + Annual CTC)
-          </p>
-        </div>
-      </label>
-
-      {eligibilityCategory === "Salaried Professional" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-          <input
-            {...register("salaryCompanyName")}
-            type="text"
-            placeholder="Company Name"
-             required={eligibilityCategory === "Salaried Professional"}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
-          />
-
-          <input
-            {...register("designation")}
-            type="text"
-            placeholder="Designation"
-              required={eligibilityCategory === "Salaried Professional"}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
-          />
-
-        </div>
-      )}
-
-      {/* DPIIT */}
-      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
-        <input
-          {...register("eligibilityCategory")}
-          type="radio"
-          value="DPIIT Startup Founder"
-          className="mt-1 accent-green-600"
-        />
-
-        <div>
-          <p className="font-semibold text-sm text-gray-800">
-            DPIIT Recognized Startup Founder
-          </p>
-        </div>
-      </label>
-
-      {eligibilityCategory === "DPIIT Startup Founder" && (
-        <div>
-          <input
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
-             required={eligibilityCategory === "DPIIT Startup Founder"}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-
-              if (!file) return;
-
-              setValue("dpiitCertificate", file.name);
-            }}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
-          />
-        </div>
-      )}
-
-      {/* Trademark */}
-      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
-        <input
-          {...register("eligibilityCategory")}
-          type="radio"
-          value="Trademark Holder"
-          className="mt-1 accent-green-600"
-            required={eligibilityCategory === "Trademark Holder"}
-        />
-
-        <div>
-          <p className="font-semibold text-sm text-gray-800">
-             Registered Trademark Holder
-          </p>
-        </div>
-      </label>
-
-      {eligibilityCategory === "Trademark Holder" && (
-        <div>
-          <input
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
-             required={eligibilityCategory === "Trademark Holder"}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-
-              if (!file) return;
-
-              setValue("trademarkCertificate", file.name);
-            }}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black"
-          />
-        </div>
-      )}
-
-      {/* None */}
-      <label className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer">
-        <input
-          {...register("eligibilityCategory")}
-          type="radio"
-          value="None"
-          className="mt-1 accent-green-600"
-        />
-
-        <div>
-          <p className="font-semibold text-sm text-gray-800 ">
-            None of the Above
-          </p>
-        </div>
-      </label>
-
-
-    <span className="text-black font-bold">
-Verification Note :</span>
-
-<span className="text-black">The TPL organizing committee reserves the right to verify submitted information and approve registrations accordingly.</span>
-
-
-
-      {errors.eligibilityCategory && (
-        <p className="text-xs text-red-500">
-          {errors.eligibilityCategory.message}
-        </p>
-      )}
-    </div>
-      <SectionLabel label="Personal Information" />
-        
-        
-         </>)}
-
-
       {/* Full Name */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-1.5">

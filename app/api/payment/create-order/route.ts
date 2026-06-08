@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     const d = parsed.data;
 
-    if (!["Player", "Spectator", "Team Owner"].includes(d.registrationType)) {
+    if (!["Player", "Team Owner"].includes(d.registrationType)) {
   return NextResponse.json(
     { error: "Invalid registration type" },
     { status: 400 }
@@ -58,15 +58,14 @@ export async function POST(request: NextRequest) {
       jn:  d.jerseyNumber,
       jnm: d.jerseyName,
       pu:  d.photoUrl.slice(0, 256),
+      cp:  d.cricheroProfile ?? "",
       tn: d.teamName ?? "",
     };
-
-    // cp:  d.cricheroProfile ?? "",
 
     const amount =
   d.registrationType === "Team Owner"
     ? 1000000 // ₹10,000 in paise
-    : 50000; // ₹500 in paise
+    : 100; // ₹500 in paise (Players)
 
 
     const order = await razorpay.orders.create({

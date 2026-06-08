@@ -3,7 +3,7 @@ import { z } from "zod";
 export const registrationSchema = z
   .object({
     registrationType: z.enum(
-      ["Player", "Spectator", "Team Owner"],
+      ["Player", "Team Owner"],
       {
         error: "Please select a registration type",
       }
@@ -104,30 +104,6 @@ export const registrationSchema = z
     cricheroProfile: z.string().optional(),
 
     // =================================
-    // ELIGIBILITY VERIFICATION
-    // =================================
-
-    eligibilityCategory: z
-      .enum([
-        "GST Registered Business Owner",
-        "Salaried Professional",
-        "DPIIT Startup Founder",
-        "Trademark Holder",
-        "None",
-      ])
-      .optional(),
-
-    gstNumber: z.string().optional(),
-
-    salaryCompanyName: z.string().optional(),
-
-    designation: z.string().optional(),
-
-    dpiitCertificate: z.string().optional(),
-
-    trademarkCertificate: z.string().optional(),
-
-    // =================================
     // TEAM OWNER
     // =================================
 
@@ -186,97 +162,6 @@ export const registrationSchema = z
           message: "Cricheros profile is required",
           path: ["cricheroProfile"],
         });
-      }
-
-      // =================================
-      // ELIGIBILITY VALIDATION
-      // =================================
-
-      if (!data.eligibilityCategory) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Please select an eligibility category",
-          path: ["eligibilityCategory"],
-        });
-      }
-
-      // GST
-      if (
-        data.eligibilityCategory ===
-        "GST Registered Business Owner"
-      ) {
-        if (
-          !data.gstNumber ||
-          data.gstNumber.trim().length < 1
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            message: "GST Number is required",
-            path: ["gstNumber"],
-          });
-        }
-      }
-
-      // Salaried Professional
-      if (
-        data.eligibilityCategory ===
-        "Salaried Professional"
-      ) {
-        if (
-          !data.salaryCompanyName ||
-          data.salaryCompanyName.trim().length < 2
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            message: "Company name is required",
-            path: ["salaryCompanyName"],
-          });
-        }
-
-        if (
-          !data.designation ||
-          data.designation.trim().length < 2
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            message: "Designation is required",
-            path: ["designation"],
-          });
-        }
-      }
-
-      // DPIIT
-      if (
-        data.eligibilityCategory ===
-        "DPIIT Startup Founder"
-      ) {
-        if (
-          !data.dpiitCertificate ||
-          data.dpiitCertificate.trim().length < 1
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            message: "DPIIT Certificate is required",
-            path: ["dpiitCertificate"],
-          });
-        }
-      }
-
-      // Trademark
-      if (
-        data.eligibilityCategory ===
-        "Trademark Holder"
-      ) {
-        if (
-          !data.trademarkCertificate ||
-          data.trademarkCertificate.trim().length < 1
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            message: "Trademark Certificate is required",
-            path: ["trademarkCertificate"],
-          });
-        }
       }
     }
 

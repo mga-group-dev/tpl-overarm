@@ -92,13 +92,6 @@ export async function POST(request: NextRequest) {
   razorpay_order_id,
   // Payment Status
   "Paid",
-  // Eligibility
-  notes.ec ?? "",
-  notes.gst ?? "",
-  notes.scn ?? "",
-  notes.des ?? "",
-  notes.dpi ?? "",
-  notes.tm ?? "",
   // Team Owner
   notes.tn ?? "",
     ]);
