@@ -1,7 +1,8 @@
 export async function appendRegistration(row: string[]): Promise<void> {
   const scriptUrl = process.env.GOOGLE_SCRIPT_URL;
   if (!scriptUrl) {
-    throw new Error("GOOGLE_SCRIPT_URL is not set");
+    console.warn("GOOGLE_SCRIPT_URL is not set - skipping sheet storage");
+    return;
   }
 
   const res = await fetch(scriptUrl, {
