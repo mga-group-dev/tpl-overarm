@@ -68,44 +68,53 @@ export async function POST(request: NextRequest) {
           timeZone: "Asia/Kolkata",
         });
 
-      // TODO: Re-enable when new Google Sheet is set up
-      // // Store FREE registration only
-      // await appendRegistration([
-      //   timestamp,
-      //   data.registrationType,
-      //   data.fullName,
-      //   String(data.age),
-      //   data.gender,
-      //   data.contactNumber,
-      //   data.companyName ?? "",
-      //   isPlayer
-      //     ? data.playingExpertise ?? ""
-      //     : "",
-      //   isPlayer
-      //     ? data.battingSkills?.toString() ??
-      //         ""
-      //     : "",
-      //   isPlayer
-      //     ? data.bowlingSkills?.toString() ??
-      //         ""
-      //     : "",
-      //   isPlayer
-      //     ? data.fieldingSkills?.toString() ??
-      //         ""
-      //     : "",
-      //   data.jerseySize,
-      //   data.jerseyNumber,
-      //   data.jerseyName,
-      //   data.photoUrl,
-      //   isPlayer
-      //     ? data.cricheroProfile ?? ""
-      //     : "",
-      //   "", // payment id
-      //   "", // order id
-      //   "Free",
-      //   data.teamName ?? "",
-      // ]);
-      console.log("Verify: Free registration skipped sheet storage");
+      // Store FREE registration
+      await appendRegistration([
+        timestamp,
+        data.registrationType,
+        data.fullName,
+        String(data.age),
+        data.gender,
+        data.contactNumber,
+        data.companyName ?? "",
+        isPlayer
+          ? data.playingExpertise ?? ""
+          : "",
+        isPlayer
+          ? data.battingSkills?.toString() ??
+              ""
+          : "",
+        isPlayer
+          ? data.bowlingSkills?.toString() ??
+              ""
+          : "",
+        isPlayer
+          ? data.fieldingSkills?.toString() ??
+              ""
+          : "",
+        data.jerseySize,
+        data.jerseyNumber,
+        data.jerseyName,
+        data.photoUrl,
+        isPlayer
+          ? data.cricheroProfile ?? ""
+          : "",
+        "", // payment id
+        "", // order id
+        "Free",
+        data.teamName ?? "",
+        // Padding columns (21-27)
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        // Column 28 - Form Submission Status
+        "Yes",
+      ]);
+      console.log("Verify: Free registration recorded with column 28 marked as Yes");
 
       return NextResponse.json({
         success: true,
