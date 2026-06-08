@@ -91,7 +91,6 @@ export async function POST(request: NextRequest) {
   razorpay_payment_id,
   razorpay_order_id,
   // Payment Status
-  "Paid",
   // Team Owner
   notes.tn ?? "",
     ]);
