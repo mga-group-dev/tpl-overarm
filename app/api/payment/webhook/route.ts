@@ -5,6 +5,7 @@ import { appendRegistration } from "@/lib/sheets";
 // Razorpay sends webhooks as raw JSON. We must read the raw body first so the
 // HMAC signature can be verified before we do anything with the data.
 export async function POST(request: NextRequest) {
+  console.log("🔔 WEBHOOK TRIGGERED - Webhook handler is running");
   const rawBody = await request.text();
 
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
